@@ -159,6 +159,17 @@ body::before {
   animation: fadeIn 4s ease forwards;
 }
 
+.hero-logo {
+  width: clamp(110px, 22vw, 190px);
+  height: clamp(110px, 22vw, 190px);
+  object-fit: contain;
+  mix-blend-mode: screen;
+  margin-bottom: 1.5rem;
+  animation: fadeIn 1.8s ease forwards;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
 /* ─── NAV ─── */
 nav {
   position: sticky;
@@ -577,6 +588,7 @@ footer::before {
 
 <!-- HERO -->
 <section class="hero">
+  <img class="hero-logo" src="https://i.ibb.co/bk4KXpz/logotheperfect.png" alt="NÖIZ logo">
   <div class="wordmark">NÖIZ</div>
   <div class="hero-tagline">Zero ruido &nbsp;·&nbsp; Zero pensamiento &nbsp;·&nbsp; Zero yo</div>
   <div class="protocol-badge">Protocolo Horizonte de Sucesos &nbsp; 3:36:00</div>
