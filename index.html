@@ -163,11 +163,12 @@ body::before {
   width: clamp(110px, 22vw, 190px);
   height: clamp(110px, 22vw, 190px);
   object-fit: contain;
-  mix-blend-mode: screen;
+  mix-blend-mode: lighten;
   margin-bottom: 1.5rem;
   animation: fadeIn 1.8s ease forwards;
   opacity: 0;
   animation-fill-mode: forwards;
+  filter: contrast(1.1) brightness(1.05);
 }
 
 /* ─── NAV ─── */
