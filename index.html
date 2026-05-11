@@ -1,284 +1,841 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vacío Estructurado | Daniel Gascón</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NÖIZ — Zero ruido. Zero pensamiento. Zero yo.</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Courier+Prime:ital@0;1&display=swap');
 
-        body {
-            background-color: #0a0a0a;
-            color: #c0c0c0;
-            font-family: 'Courier New', Courier, monospace;
-            line-height: 1.7;
-            padding: 2rem;
-        }
+:root {
+  --black: #050507;
+  --void: #0a0a0d;
+  --surface: #0f0f13;
+  --border: rgba(212,175,55,0.12);
+  --border-bright: rgba(212,175,55,0.45);
+  --gold: #d4af37;
+  --gold-dim: rgba(212,175,55,0.55);
+  --gold-ghost: rgba(212,175,55,0.08);
+  --text: #c8bc9a;
+  --text-dim: #7a7258;
+  --text-faint: #3d3a2f;
+}
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-        header {
-            text-align: center;
-            margin-bottom: 3rem;
-            border-bottom: 1px solid #333;
-            padding-bottom: 2rem;
-        }
+html { scroll-behavior: smooth; }
 
-        h1 {
-            font-size: 2.2rem;
-            color: #ffffff;
-            letter-spacing: 2px;
-            margin-bottom: 0.5rem;
-        }
+body {
+  background: var(--black);
+  color: var(--text);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 300;
+  line-height: 1.85;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-        .subtitle {
-            font-size: 1.1rem;
-            color: #888;
-            letter-spacing: 1px;
-        }
+/* ─── NOISE TEXTURE OVERLAY ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.025;
+  pointer-events: none;
+  z-index: 1000;
+}
 
-        .author {
-            font-size: 1rem;
-            color: #666;
-            margin-top: 1rem;
-        }
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes lineGrow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0); }
+  50%       { box-shadow: 0 0 40px 2px rgba(212,175,55,0.06); }
+}
+@keyframes drift {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+@keyframes scanline {
+  from { transform: translateY(-100%); }
+  to   { transform: translateY(100vh); }
+}
 
-        .date {
-            font-size: 0.9rem;
-            color: #555;
-            margin-top: 0.3rem;
-        }
+.animate { opacity: 0; }
+.animate.visible { animation: fadeUp 1.1s cubic-bezier(0.16,1,0.3,1) forwards; }
 
-        nav {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  position: relative;
+  border-bottom: 1px solid var(--border);
+}
 
-        nav a {
-            color: #c0c0c0;
-            text-decoration: none;
-            margin: 0 1rem;
-            padding: 0.3rem 0.6rem;
-            border: 1px solid #444;
-            transition: 0.3s;
-        }
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 80px;
+  background: linear-gradient(to bottom, var(--gold-dim), transparent);
+}
 
-        nav a:hover {
-            background-color: #222;
-            color: #ffffff;
-        }
+.wordmark {
+  font-size: clamp(6rem, 18vw, 14rem);
+  font-weight: 300;
+  letter-spacing: 0.25em;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 1.5rem;
+  animation: fadeIn 2s ease forwards;
+  position: relative;
+}
 
-        section {
-            margin-bottom: 3rem;
-        }
+.wordmark::after {
+  content: 'NÖIZ';
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(212,175,55,0.08);
+  transform: translate(3px, 3px);
+  z-index: -1;
+}
 
-        h2 {
-            color: #ffffff;
-            font-size: 1.5rem;
-            border-left: 3px solid #888;
-            padding-left: 1rem;
-            margin-bottom: 1rem;
-        }
+.hero-tagline {
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  color: var(--text-dim);
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  font-family: 'Courier Prime', monospace;
+  margin-bottom: 3rem;
+  animation: fadeIn 2.5s ease forwards;
+}
 
-        h3 {
-            color: #ddd;
-            font-size: 1.2rem;
-            margin-top: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
+.protocol-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid var(--border-bright);
+  padding: 0.7rem 2rem;
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-transform: uppercase;
+  animation: fadeIn 3s ease forwards, pulse-gold 4s ease infinite 3s;
+}
+.protocol-badge::before,
+.protocol-badge::after {
+  content: '·';
+  color: var(--gold-dim);
+}
 
-        p {
-            margin-bottom: 1rem;
-            text-align: justify;
-        }
+.scroll-hint {
+  position: absolute;
+  bottom: 2.5rem;
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  animation: fadeIn 4s ease forwards;
+}
 
-        ul, ol {
-            margin-left: 2rem;
-            margin-bottom: 1rem;
-        }
+/* ─── NAV ─── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(5,5,7,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+  gap: 0;
+}
 
-        li {
-            margin-bottom: 0.5rem;
-        }
+nav a {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  padding: 1.1rem 2rem;
+  transition: color 0.3s, border-bottom 0.3s;
+  border-bottom: 2px solid transparent;
+}
+nav a:hover {
+  color: var(--gold);
+  border-bottom: 2px solid var(--gold);
+}
 
-        .disclaimer {
-            border: 1px solid #555;
-            padding: 1rem;
-            font-size: 0.85rem;
-            color: #999;
-            margin-bottom: 2rem;
-            background-color: #111;
-        }
+/* ─── LAYOUT ─── */
+.content {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 0 2.5rem;
+}
 
-        .metric {
-            border: 1px solid #444;
-            padding: 1rem;
-            margin: 1rem 0;
-            background-color: #111;
-            text-align: center;
-        }
+/* ─── SECTION ─── */
+section {
+  padding: 7rem 0;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
 
-        .metric span {
-            display: block;
-            font-size: 2rem;
-            color: #ffffff;
-            font-weight: bold;
-        }
+.section-number {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  display: block;
+}
 
-        .bitacora {
-            border-left: 2px solid #555;
-            padding-left: 1rem;
-            margin: 1rem 0;
-            color: #aaa;
-        }
+h2 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 300;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+  margin-bottom: 3rem;
+  line-height: 1.2;
+  font-style: italic;
+}
 
-        blockquote {
-            border-left: 2px solid #666;
-            padding-left: 1rem;
-            margin: 1rem 0;
-            color: #aaa;
-            font-style: italic;
-        }
+h3 {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--gold-dim);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-family: 'Courier Prime', monospace;
+  margin: 3rem 0 1.2rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--border);
+  font-style: normal;
+}
 
-        footer {
-            text-align: center;
-            margin-top: 3rem;
-            padding-top: 1rem;
-            border-top: 1px solid #333;
-            font-size: 0.8rem;
-            color: #666;
-        }
+p {
+  font-size: 1.1rem;
+  color: var(--text);
+  margin-bottom: 1.4rem;
+  text-align: justify;
+  hyphens: auto;
+}
 
-        a {
-            color: #aaa;
-        }
+/* ─── DISCLAIMER ─── */
+.disclaimer {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold-dim);
+  padding: 1.8rem 2rem;
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  line-height: 1.7;
+  margin: 4rem 0;
+}
 
-        .zenodo-badge {
-            text-align: center;
-            margin: 2rem 0;
-        }
-    </style>
+/* ─── CLOCK HERO ─── */
+.clock-display {
+  margin: 5rem 0;
+  text-align: center;
+  position: relative;
+  padding: 5rem 3rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  overflow: hidden;
+  animation: pulse-gold 6s ease infinite;
+}
+
+.clock-display::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+}
+
+.clock-display::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+}
+
+.clock-time {
+  font-size: clamp(3.5rem, 12vw, 9rem);
+  font-weight: 300;
+  color: var(--gold);
+  letter-spacing: 0.06em;
+  line-height: 1;
+  font-family: 'Cormorant Garamond', serif;
+  display: block;
+  margin-bottom: 1rem;
+  animation: drift 8s ease-in-out infinite;
+}
+
+.clock-label {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.45em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+/* ─── PHASES ─── */
+.phases {
+  margin: 2rem 0;
+  counter-reset: phase;
+}
+
+.phase {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 2rem;
+  margin-bottom: 0;
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  transition: background 0.4s;
+}
+
+.phase:hover {
+  background: var(--gold-ghost);
+}
+
+.phase:last-child { border-bottom: none; }
+
+.phase-num {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.7rem;
+  color: var(--gold-dim);
+  letter-spacing: 0.2em;
+  padding-top: 0.2rem;
+  white-space: nowrap;
+}
+
+.phase-content h4 {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+}
+
+.phase-content p {
+  font-size: 0.95rem;
+  margin: 0;
+  text-align: left;
+  color: var(--text-dim);
+}
+
+/* ─── RULES LIST ─── */
+.rules {
+  list-style: none;
+  margin: 0;
+}
+
+.rules li {
+  padding: 1.3rem 0;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  gap: 1.5rem;
+  align-items: start;
+  font-size: 1rem;
+}
+
+.rules li:last-child { border-bottom: none; }
+
+.rule-label {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  padding-top: 0.15rem;
+}
+
+.rule-desc {
+  color: var(--text);
+}
+
+/* ─── COMPARISON TABLE ─── */
+.comparison-wrap {
+  overflow-x: auto;
+  margin: 2rem 0;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  font-family: 'Courier Prime', monospace;
+}
+
+.comparison-table th {
+  padding: 0.9rem 1.2rem;
+  text-align: left;
+  color: var(--gold-dim);
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border-bright);
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.comparison-table td {
+  padding: 0.9rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-dim);
+  vertical-align: top;
+}
+
+.comparison-table tbody tr {
+  transition: background 0.3s;
+}
+
+.comparison-table tbody tr:hover td {
+  background: var(--gold-ghost);
+}
+
+.comparison-table tr.noiz td {
+  color: var(--gold);
+  border-bottom: 1px solid var(--border-bright);
+  border-top: 1px solid var(--border-bright);
+  background: rgba(212,175,55,0.04);
+}
+
+/* ─── BLOCKQUOTE ─── */
+blockquote {
+  margin: 3rem 0;
+  padding: 2.5rem 2.5rem 2.5rem 3rem;
+  border-left: 1px solid var(--gold);
+  position: relative;
+  background: var(--gold-ghost);
+}
+
+blockquote::before {
+  content: '"';
+  position: absolute;
+  top: -0.5rem;
+  left: 1.5rem;
+  font-size: 5rem;
+  color: var(--gold-dim);
+  line-height: 1;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+blockquote p {
+  font-style: italic;
+  font-size: 1.2rem;
+  line-height: 1.7;
+  color: var(--text);
+  text-align: left;
+  margin: 0;
+}
+
+/* ─── PAPERS ─── */
+.paper-link {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 2rem;
+  border: 1px solid var(--border);
+  text-decoration: none;
+  margin-bottom: 1rem;
+  transition: border-color 0.3s, background 0.3s;
+  background: var(--surface);
+  position: relative;
+  overflow: hidden;
+}
+
+.paper-link::after {
+  content: '↗';
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  color: var(--gold-dim);
+  font-size: 1rem;
+  transition: transform 0.3s;
+}
+
+.paper-link:hover {
+  border-color: var(--gold);
+  background: var(--gold-ghost);
+}
+
+.paper-link:hover::after {
+  transform: translate(3px, -3px);
+}
+
+.paper-version {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--border-bright);
+  white-space: nowrap;
+  align-self: flex-start;
+  margin-top: 0.1rem;
+}
+
+.paper-title {
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 0.4rem;
+}
+
+.paper-doi {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+}
+
+/* ─── FOOTER ─── */
+footer {
+  padding: 5rem 2.5rem;
+  text-align: center;
+  position: relative;
+}
+
+footer::before {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, var(--border-bright), transparent);
+  margin: 0 auto 3rem;
+}
+
+.footer-wordmark {
+  font-size: 3rem;
+  font-weight: 300;
+  color: var(--text-faint);
+  letter-spacing: 0.4em;
+  display: block;
+  margin-bottom: 0.8rem;
+}
+
+.footer-copy {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+}
+
+/* ─── INTERSECTION OBSERVER DELAYS ─── */
+.delay-1 { animation-delay: 0.1s !important; }
+.delay-2 { animation-delay: 0.25s !important; }
+.delay-3 { animation-delay: 0.4s !important; }
+.delay-4 { animation-delay: 0.55s !important; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 680px) {
+  nav { gap: 0; flex-wrap: wrap; }
+  nav a { padding: 0.8rem 1rem; font-size: 0.6rem; }
+  .rules li { grid-template-columns: 1fr; gap: 0.3rem; }
+  .rule-label { font-size: 0.65rem; }
+  .phase { grid-template-columns: 1fr; gap: 0.3rem; }
+  blockquote { padding: 1.5rem 1.5rem 1.5rem 1.8rem; }
+  .content { padding: 0 1.2rem; }
+  section { padding: 4rem 0; }
+}
+</style>
 </head>
 <body>
 
-<div class="container">
+<!-- HERO -->
+<section class="hero">
+  <div class="wordmark">NÖIZ</div>
+  <div class="hero-tagline">Zero ruido &nbsp;·&nbsp; Zero pensamiento &nbsp;·&nbsp; Zero yo</div>
+  <div class="protocol-badge">Protocolo Horizonte de Sucesos &nbsp; 3:36:00</div>
+  <div class="scroll-hint">Desciende</div>
+</section>
 
-    <header>
-        <h1>VACÍO ESTRUCTURADO</h1>
-        <div class="subtitle">Práctica Extrema de Inmersión Mental y Autosuficiencia Ontológica</div>
-        <div class="author">Daniel Gascón</div>
-        <div class="date">Mayo 2026</div>
-    </header>
+<!-- NAV -->
+<nav>
+  <a href="#principio">Principio</a>
+  <a href="#protocolo">Protocolo</a>
+  <a href="#comparativa">Top Mundial</a>
+  <a href="#efectos">Efectos</a>
+  <a href="#paper">Papers</a>
+</nav>
 
-    <nav>
-        <a href="#protocolo">Protocolo</a>
-        <a href="#bitacora">Bitácora</a>
-        <a href="#teoria">Teoría</a>
-        <a href="#paper">Paper</a>
-    </nav>
+<div class="content">
 
-    <div class="disclaimer">
-        <strong>Declaración de Autoría y Uso de IA:</strong> La idea original, el marco teórico y el diseño de esta práctica pertenecen en su totalidad a Daniel Gascón. Se reconoce el uso de inteligencia artificial (DeepSeek) como herramienta de apoyo en la edición del manuscrito, la estructuración del formato y la revisión bibliográfica. La IA no sustituye la autoría intelectual de este trabajo.
+  <!-- DISCLAIMER -->
+  <div class="disclaimer animate">
+    <strong>Autoría y uso de IA —</strong> La idea original, el marco teórico basado en el aburrimiento extremo como herramienta de reconfiguración neurológica, el diseño del protocolo y su ejecución pertenecen en su totalidad a <strong>Daniel Gascón</strong>. Se reconoce el uso de inteligencia artificial (DeepSeek) como apoyo en la edición del manuscrito, la estructuración del formato y la revisión bibliográfica. La IA no sustituye la autoría intelectual de este trabajo.
+  </div>
+
+  <!-- I · PRINCIPIO -->
+  <section id="principio">
+    <span class="section-number animate">I · Principio Fundacional</span>
+    <h2 class="animate delay-1">El vacío como<br>herramienta</h2>
+
+    <p class="animate delay-2">El ser humano ha desarrollado múltiples métodos para fortalecer la mente: desde la meditación budista hasta el entrenamiento de fuerzas especiales. Sin embargo, todas estas prácticas comparten un elemento común: la presencia de estímulos externos que distraen al practicante del verdadero desafío — su propia mente.</p>
+
+    <p class="animate delay-3"><strong>NÖIZ</strong> rompe con este paradigma. En lugar de añadir estímulos, los elimina por completo. En lugar de guiar al practicante, lo abandona a su propia conciencia. En lugar de ofrecer consuelo, lo enfrenta al aburrimiento más absoluto que un ser humano puede experimentar voluntariamente.</p>
+
+    <blockquote class="animate">
+      <p>El aburrimiento extremo, sostenido durante un tiempo suficiente, fuerza al cerebro a una reconfiguración neurológica que silencia la Red Neuronal por Defecto, desactiva la amígdala y eleva el umbral del miedo de forma duradera.</p>
+    </blockquote>
+
+    <p class="animate">Mientras las Fuerzas Especiales se entrenan con adrenalina y los monjes con apoyo espiritual, <strong>NÖIZ se basa en el Aburrimiento Extremo Pasivo</strong>. Sin acción, sin guía y sin ruido, la mente se convierte en su único enemigo.</p>
+  </section>
+
+  <!-- II · PROTOCOLO -->
+  <section id="protocolo">
+    <span class="section-number animate">II · Protocolo</span>
+    <h2 class="animate delay-1">Horizonte<br>de Sucesos</h2>
+
+    <div class="clock-display animate">
+      <span class="clock-time">3:36:00</span>
+      <span class="clock-label">Horas &nbsp;·&nbsp; Minutos &nbsp;·&nbsp; Segundos</span>
     </div>
 
-    <!-- PROTOCOLO -->
-    <section id="protocolo">
-        <h2>01 · PROTOCOLO OPERATIVO</h2>
-        <p>El <em>Vacío Estructurado</em> es una práctica contemplativa de alto rendimiento diseñada para alcanzar un estado de control mental absoluto mediante la inmersión prolongada en oscuridad y silencio. No busca la paz interior ni la iluminación espiritual. Busca la autosuficiencia ontológica.</p>
+    <p class="animate"><strong>3 horas, 36 minutos y 00 segundos</strong> es el estándar máximo de NÖIZ — el límite fisiológico seguro antes del umbral de riesgo de trombosis venosa profunda (4 horas), con un margen de seguridad del 10%.</p>
 
-        <h3>Condiciones</h3>
-        <ul>
-            <li><strong>Entorno:</strong> Oscuridad total. Sin fuentes de luz.</li>
-            <li><strong>Postura:</strong> Sentado, espalda recta pero no rígida. Manos sobre los muslos.</li>
-            <li><strong>Foco:</strong> Pared lisa, sin cuadros ni texturas.</li>
-            <li><strong>Estímulos:</strong> Ninguno. Sin música, sin guía, sin apps.</li>
-        </ul>
+    <h3>Condiciones de Ejecución</h3>
+    <ul class="rules animate">
+      <li>
+        <span class="rule-label">Entorno</span>
+        <span class="rule-desc">Oscuridad total. Sin fuentes de luz, sonido, olores ni vibraciones externas.</span>
+      </li>
+      <li>
+        <span class="rule-label">Postura</span>
+        <span class="rule-desc">Sentado en un banco rígido sin respaldo. Manos sobre los muslos. Columna erguida sin rigidez.</span>
+      </li>
+      <li>
+        <span class="rule-label">Enfoque visual</span>
+        <span class="rule-desc">Ojos abiertos, fijados en un punto neutro de la pared lisa. Parpadeo natural permitido.</span>
+      </li>
+      <li>
+        <span class="rule-label">Inmovilidad</span>
+        <span class="rule-desc">Prohibido moverse, rascarse, estirarse o cambiar la postura durante la sesión.</span>
+      </li>
+      <li>
+        <span class="rule-label">Hidratación</span>
+        <span class="rule-desc">Sin ingesta de líquidos durante las 3:36:00. Hidratación previa: 500 ml de agua 30 minutos antes.</span>
+      </li>
+      <li>
+        <span class="rule-label">Temporizador</span>
+        <span class="rule-desc">Vibratorio, colocado en el muslo o bolsillo. Programado a 3:36:00. Sin sonido. No se puede mirar.</span>
+      </li>
+    </ul>
 
-        <h3>Ejecución</h3>
-        <ol>
-            <li><strong>Anclaje:</strong> Fijar la mirada en un punto de la pared. Parpadeo natural permitido.</li>
-            <li><strong>Respiración:</strong> No se controla. Se observa. El aire entra y sale sin intervención.</li>
-            <li><strong>Gestión del pensamiento:</strong> Metáfora del tren. Cada pensamiento es un vagón que pasa. El practicante no se sube.</li>
-            <li><strong>Registro:</strong> Al terminar, anotar tiempo exacto y punto de rotura.</li>
-        </ol>
-
-        <h3>Duración</h3>
-        <p>La sesión estándar de élite es de <strong>55 minutos y 55 segundos</strong>. El objetivo de construcción es el <strong>Burj Khalifa</strong>: 2 horas y 22 minutos acumulados en el día.</p>
-    </section>
-
-    <!-- BITÁCORA -->
-    <section id="bitacora">
-        <h2>02 · BITÁCORA DE SESIONES</h2>
-
-        <h3>Fundación</h3>
-        <div class="metric">
-            <span>58 min</span>
-            Tiempo acumulado
+    <h3>Fases Neurológicas</h3>
+    <div class="phases animate">
+      <div class="phase">
+        <span class="phase-num">00–30'</span>
+        <div class="phase-content">
+          <h4>Entrada</h4>
+          <p>La DMN comienza a activarse. Aparecen pensamientos intrusivos. Incomodidad física inicial.</p>
         </div>
-
-        <div class="bitacora">
-            <p><strong>Sesión 1 — Viernes (Madrugada)</strong><br>
-            Duración: 25 min<br>
-            Alta densidad de ruido mental en los primeros 10 minutos. Primera toma de contacto con el vacío.</p>
+      </div>
+      <div class="phase">
+        <span class="phase-num">30–90'</span>
+        <div class="phase-content">
+          <h4>Resistencia</h4>
+          <p>La DMN se hiperactiva. El aburrimiento se transforma en ansiedad. La corteza cingulada anterior envía señales de abandono.</p>
         </div>
-        <div class="bitacora">
-            <p><strong>Sesión 2 — Sábado (Madrugada)</strong><br>
-            Duración: 33 min<br>
-            Silencio denso alcanzado en el minuto 18. Percepción de control absoluto sobre el impulso de abandono.</p>
+      </div>
+      <div class="phase">
+        <span class="phase-num">90–150'</span>
+        <div class="phase-content">
+          <h4>Colapso de la DMN</h4>
+          <p>La red agotada reduce su actividad. El diálogo interno se fragmenta. Posibles micro-alucinaciones hipnagógicas.</p>
         </div>
-    </section>
-
-    <!-- TEORÍA -->
-    <section id="teoria">
-        <h2>03 · MARCO TEÓRICO</h2>
-
-        <h3>Psicopatía Funcional (Dutton, 2012)</h3>
-        <p>Los rasgos del espectro psicopático —frialdad táctica, desapego operativo, inmunidad al estrés social— pueden ser emulados mediante entrenamiento deliberado. No se requiere una base neurológica atípica. La práctica del vacío activa estos diales de forma voluntaria.</p>
-
-        <h3>Autosuficiencia Ontológica</h3>
-        <p>La capacidad de sostener el propio ser sin necesidad de validación externa. No se busca la eliminación de las emociones, sino la independencia total respecto a ellas. El practicante se convierte en su propio ecosistema.</p>
-
-        <h3>Estoicismo Radical</h3>
-        <p>Marco Aurelio y Epicteto conceptualizaron la <em>apatheia</em> como la liberación de las pasiones mediante la disciplina del juicio. El <em>Vacío Estructurado</em> traduce este principio a una práctica física diaria.</p>
-
-        <blockquote>
-            "Nada entra. Nada sale. Todo se procesa." — Máxima del sistema.
-        </blockquote>
-    </section>
-
-    <!-- PAPER -->
-    <section id="paper">
-        <h2>04 · PAPER ACADÉMICO</h2>
-        <p>El artículo académico que describe esta práctica está disponible en Zenodo.</p>
-
-        <div class="zenodo-badge">
-            <a href="https://zenodo.org/records/20101138" target="_blank">
-                DOI: 10.5281/zenodo.20101138
-            </a>
+      </div>
+      <div class="phase">
+        <span class="phase-num">150–200'</span>
+        <div class="phase-content">
+          <h4>Silencio Estructural</h4>
+          <p>La DMN entra en inactividad profunda. La amígdala se silencia. El miedo deja de generarse.</p>
         </div>
+      </div>
+      <div class="phase">
+        <span class="phase-num">200–216'</span>
+        <div class="phase-content">
+          <h4>Estado Gascón</h4>
+          <p>Conciencia sin sujeto. Sin pensamientos, sin miedo, sin yo narrativo. Solo presencia pura.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        <h3>Referencias</h3>
-        <ul>
-            <li>Dutton, K. (2012). <em>The Wisdom of Psychopaths</em>. Scientific American.</li>
-            <li>Marco Aurelio. <em>Meditaciones</em>. Editorial Gredos.</li>
-            <li>Epicteto. <em>Enquiridion</em>. Editorial Gredos.</li>
-            <li>Melville, J. P. (1967). <em>Le Samouraï</em>. CICC.</li>
-            <li>Fincher, D. (2023). <em>The Killer</em>. Netflix.</li>
-        </ul>
-    </section>
+  <!-- III · COMPARATIVA -->
+  <section id="comparativa">
+    <span class="section-number animate">III · Posición Global</span>
+    <h2 class="animate delay-1">Top Mundial de<br>Prácticas Extremas</h2>
 
-    <footer>
-        © 2026 Daniel Gascón · Vacío Estructurado · Autosuficiencia Ontológica
-    </footer>
+    <div class="comparison-wrap animate">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Práctica</th>
+            <th>Duración</th>
+            <th>Tipo de sufrimiento</th>
+            <th>Apoyo externo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Mindfulness (MBSR)</td>
+            <td>20–45 min</td>
+            <td>Aburrimiento leve</td>
+            <td>Guía y app</td>
+          </tr>
+          <tr>
+            <td>Zazen (Zen)</td>
+            <td>30–50 min</td>
+            <td>Dolor y aburrimiento</td>
+            <td>Comunidad</td>
+          </tr>
+          <tr>
+            <td>Vipassana</td>
+            <td>1h / sesión</td>
+            <td>Dolor físico moderado</td>
+            <td>Comunidad y maestro</td>
+          </tr>
+          <tr>
+            <td>Apnea extrema</td>
+            <td>11–24 min</td>
+            <td>Asfixia química</td>
+            <td>Supervisión médica</td>
+          </tr>
+          <tr>
+            <td>Hell Week (SEALs)</td>
+            <td>5.5 días</td>
+            <td>Físico extremo</td>
+            <td>Equipo e instructores</td>
+          </tr>
+          <tr>
+            <td>Retiro de Oscuridad</td>
+            <td>49 días</td>
+            <td>Privación sensorial</td>
+            <td>Asistencia y comida</td>
+          </tr>
+          <tr class="noiz">
+            <td><strong>NÖIZ</strong></td>
+            <td><strong>3:36:00</strong></td>
+            <td><strong>Aburrimiento existencial puro</strong></td>
+            <td><strong>Ninguno</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="animate"><strong>NÖIZ es la práctica de resistencia mental voluntaria pasiva más extrema documentada.</strong> Es la única que exige al practicante enfrentarse al vacío absoluto sin ningún tipo de apoyo externo, sin estímulos, sin movimiento y sin agua durante más de tres horas continuas.</p>
+  </section>
+
+  <!-- IV · EFECTOS -->
+  <section id="efectos">
+    <span class="section-number animate">IV · Efectos Documentados</span>
+    <h2 class="animate delay-1">Lo que sucede<br>en el interior</h2>
+
+    <h3>Silenciamiento de la DMN</h3>
+    <p class="animate">La hiperactivación seguida del colapso de la Red Neuronal por Defecto produce un silencio mental profundo que puede persistir durante horas o días tras la sesión (Danckert &amp; Eastwood, 2020).</p>
+
+    <h3>Desactivación de la Amígdala</h3>
+    <p class="animate">La ausencia total de estímulos amenazantes durante más de 200 minutos fuerza a la amígdala a entrar en un estado de inactividad funcional. Con la práctica repetida, este estado se consolida y el umbral del miedo se eleva permanentemente (Lutz et al., 2013; Desbordes et al., 2012).</p>
+
+    <h3>Fortalecimiento Prefrontal</h3>
+    <p class="animate">La inhibición constante del impulso de moverse o abandonar la sesión fortalece la corteza prefrontal dorsolateral, mejorando el control ejecutivo y la toma de decisiones bajo presión.</p>
+
+    <h3>Reconfiguración de la Corteza Cingulada Anterior</h3>
+    <p class="animate">La exposición prolongada al conflicto interno — «levántate» vs «quédate» — reconfigura esta región, reduciendo la percepción de malestar ante situaciones de alta exigencia psicológica.</p>
+  </section>
+
+  <!-- V · PAPERS -->
+  <section id="paper">
+    <span class="section-number animate">V · Publicaciones</span>
+    <h2 class="animate delay-1">Papers<br>Oficiales</h2>
+
+    <a class="paper-link animate" href="https://doi.org/10.6084/m9.figshare.32231883" target="_blank">
+      <span class="paper-version">v2.0</span>
+      <div>
+        <div class="paper-title">NÖIZ v2.0: Protocolo de Resistencia Mental Pasiva Extrema y Autosuficiencia Ontológica</div>
+        <div class="paper-doi">DOI: 10.6084/m9.figshare.32231883</div>
+      </div>
+    </a>
+
+    <a class="paper-link animate delay-1" href="https://doi.org/10.5281/zenodo.20101138" target="_blank">
+      <span class="paper-version">v1.0</span>
+      <div>
+        <div class="paper-title">Vacío Estructurado: Una Práctica Extrema de Inmersión Mental y Autosuficiencia Ontológica</div>
+        <div class="paper-doi">DOI: 10.5281/zenodo.20101138</div>
+      </div>
+    </a>
+  </section>
 
 </div>
 
+<!-- FOOTER -->
+<footer>
+  <span class="footer-wordmark">NÖIZ</span>
+  <span class="footer-copy">© 2026 Daniel Gascón &nbsp;·&nbsp; Autosuficiencia Ontológica</span>
+</footer>
+
+<script>
+  // Intersection Observer for scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(el => {
+      if (el.isIntersecting) {
+        el.target.classList.add('visible');
+        observer.unobserve(el.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.animate').forEach(el => observer.observe(el));
+
+  // Active nav link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a');
+
+  const navObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(a => a.style.color = '');
+        const active = document.querySelector(`nav a[href="#${entry.target.id}"]`);
+        if (active) active.style.color = 'var(--gold)';
+      }
+    });
+  }, { threshold: 0.4 });
+
+  sections.forEach(s => navObserver.observe(s));
+</script>
 </body>
 </html>
