@@ -247,13 +247,12 @@ nav {
 }
 
 .hero-logo {
-  width: clamp(70px, 10vw, 120px);
-  height: clamp(70px, 10vw, 120px);
-  object-fit: contain;
-  filter: invert(1) brightness(1);
-  mix-blend-mode: screen;
+  width: clamp(90px, 12vw, 150px);
+  height: clamp(90px, 12vw, 150px);
   margin-bottom: 2rem;
   animation: fadeIn 1.8s ease forwards;
+  opacity: 0;
+  animation-fill-mode: forwards;
 }
 
 .hero-wordmark {
@@ -886,7 +885,29 @@ footer {
 <header class="hero" aria-label="NÖIZ — Protocolo Horizonte de Sucesos">
   <div class="hero-inner">
     <p class="hero-eyebrow">Protocolo Horizonte de Sucesos &nbsp;·&nbsp; 2026</p>
-    <img class="hero-logo" src="https://i.ibb.co/bk4KXpz/logotheperfect.png" alt="NÖIZ logotipo" width="120" height="120">
+    <svg class="hero-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-label="NÖIZ — Águila" role="img" width="120" height="120">
+      <title>NÖIZ Águila</title>
+      <!-- Body -->
+      <ellipse cx="100" cy="118" rx="22" ry="34" fill="white"/>
+      <!-- Head -->
+      <circle cx="100" cy="72" r="16" fill="white"/>
+      <!-- Beak -->
+      <polygon points="116,70 130,78 116,80" fill="white"/>
+      <!-- Left wing extended -->
+      <path d="M78,108 C60,90 20,75 5,55 C18,68 30,82 55,100 C40,88 15,68 8,42 C22,60 42,80 68,102 C50,85 30,60 28,30 C42,55 58,80 80,108 Z" fill="white"/>
+      <!-- Right wing extended -->
+      <path d="M122,108 C140,90 180,75 195,55 C182,68 170,82 145,100 C160,88 185,68 192,42 C178,60 158,80 132,102 C150,85 170,60 172,30 C158,55 142,80 120,108 Z" fill="white"/>
+      <!-- Tail feathers -->
+      <path d="M88,148 L82,185 L92,172 L100,188 L108,172 L118,185 L112,148 Z" fill="white"/>
+      <!-- Talons left -->
+      <path d="M88,150 L78,162 M88,150 L83,165 M88,150 L90,166" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <!-- Talons right -->
+      <path d="M112,150 L122,162 M112,150 L117,165 M112,150 L110,166" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <!-- Eye -->
+      <circle cx="106" cy="70" r="2.5" fill="black"/>
+      <!-- Crown feathers -->
+      <path d="M92,58 L88,44 M100,56 L100,40 M108,58 L112,44" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
+    </svg>
     <h1 class="hero-wordmark">NÖIZ</h1>
     <p class="hero-sub">Zero ruido &nbsp;·&nbsp; Zero pensamiento &nbsp;·&nbsp; Zero yo</p>
     <div class="hero-rule" aria-hidden="true"></div>
